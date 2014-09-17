@@ -1,0 +1,25 @@
+#heatmapContainer{
+	position: absolute !important;
+	top: 0;
+	left: 0;
+	opacity: 0.0;
+}
+
+#heatmapContainer.show{
+	opacity: 1.0;
+}
+
+.screenshot-container{
+	position: relative;
+	float: left;
+	width: 25%;
+	height: 500px;
+}
+
+
+.screenshot, .heatmap{
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+}
