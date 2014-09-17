@@ -3,6 +3,7 @@ var started = false,
 	pages = [];
 
 
+//listen for popup click to start extension
 chrome.runtime.onMessage.addListener( function(request, sender, response){
 	started = request.started;
 
@@ -12,6 +13,7 @@ chrome.runtime.onMessage.addListener( function(request, sender, response){
 		endReactionaly();
 });
 
+//gets current tab and injects relevant CSS and JS into the tab
 function startReactionaly() {
 	pages = [];
 	chrome.tabs.query({
@@ -32,47 +34,49 @@ function startReactionaly() {
 	})
 }
 
+//ends extension by creating a new window, pulling all stored pages in pages array, and appending them to storage.html file which gets rendered in new window
 function endReactionaly() {
-	pageIndex = 0;
 
 	//push current page into pages array
 	chrome.storage.local.get('page', function(result){
 		var page = JSON.parse(result.page);
+		var document;
+
 		pages.push(page);
 
-		chrome.windows.create({
-			url: "storage.html",
-			focused: true,
-			type: 'panel'
-		}, function(){
-			var views = chrome.extension.getViews();
+		var views = chrome.extension.getViews();
+		var storageCreated = views.some(function(view){
+			return endsWith(view.location.href, "/storage.html");
+		});
+
+		if (!storageCreated){
+			console.log('not created')
+			chrome.tabs.create({
+				url: "storage.html",
+				active: true
+			}, function(){
+				views = chrome.extension.getViews();
+				views.forEach(function(view){
+					if (endsWith(view.location.href, "/storage.html")){
+						document = view.document;
+						renderPages(document, pages);
+					}
+				});
+
+				resetPages();
+			});
+		} else {
 			views.forEach(function(view){
 				if (endsWith(view.location.href, "/storage.html")){
-					pages.forEach(function(page){
-						console.log(page);
-						console.log(page.initialShot);
-						console.log(page.heatmap);
-						var document = view.document;
-
-						var container = document.createElement("div");
-						container.setAttribute("class", "screenshot-container");
-
-						var screenShot = document.createElement( "img" );
-						screenShot.setAttribute("class", "screenshot");
-						screenShot.src = page.initialShot;
-
-						var heatmap = document.createElement('img');
-						heatmap.setAttribute("class", "heatmap");
-						heatmap.src = page.heatmap;
-
-						container.appendChild(screenShot);
-						container.appendChild(heatmap);
-
-						document.body.appendChild(container);
-					})
+					document = view.document;
+					clearDocument(document);
+					renderPages(document, pages);
 				}
 			});
-		});
+
+			//reset pages
+			resetPages();
+		}
 	});
 }
 
@@ -82,7 +86,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changedInfo, tab){
 		chrome.tabs.insertCSS(currentTab, {
 			file : "heatmap.css"
 		});
-
 
 		chrome.tabs.executeScript(currentTab, {file: "jquery-1.11.1.min.js"}, function() {
 			chrome.tabs.executeScript(currentTab, {file: "heatmap.min.js" });
@@ -97,10 +100,41 @@ chrome.tabs.onUpdated.addListener(function(tabId, changedInfo, tab){
 	}
 });
 
+function renderPages(document, pages){
+	pages.forEach(function(page){
+
+		var container = document.createElement("div");
+		container.setAttribute("class", "screenshot-container");
+
+		var screenShot = document.createElement( "img" );
+		screenShot.setAttribute("class", "screenshot");
+		screenShot.src = page.initialShot;
+
+		var heatmap = document.createElement('img');
+		heatmap.setAttribute("class", "heatmap");
+		heatmap.src = page.heatmap;
+
+		container.appendChild(screenShot);
+		container.appendChild(heatmap);
+
+		document.body.appendChild(container);
+	})
+}
+
+function resetPages(){
+	pages = [];
+	console.log(pages);
+	chrome.storage.local.remove('page');
+}
+
+function clearDocument(document){
+	var containers = document.getElementsByClassName('screenshot-container');
+	while (containers.length > 0){
+		containers[0].remove();
+	}
+}
+
 function endsWith(str, suffix) {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
 }
-// chrome.storage.local.get( 'page1', function(result){
-// 	console.log(result);
-// });
 	
