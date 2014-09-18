@@ -26,6 +26,7 @@ function startReactionaly() {
 		chrome.tabs.insertCSS(currentTab, {
 			file : "heatmap.css"
 		});
+
 		chrome.tabs.executeScript(currentTab, {file: "jquery-1.11.1.min.js"}, function() {
 			chrome.tabs.executeScript(currentTab, {file: "heatmap.min.js" });
 			chrome.tabs.executeScript(currentTab, {file: "html2canvas.js"});
@@ -50,7 +51,6 @@ function endReactionaly() {
 		});
 
 		if (!storageCreated){
-			console.log('not created')
 			chrome.tabs.create({
 				url: "storage.html",
 				active: true
@@ -101,29 +101,48 @@ chrome.tabs.onUpdated.addListener(function(tabId, changedInfo, tab){
 });
 
 function renderPages(document, pages){
-	pages.forEach(function(page){
+	pages.forEach(function(page, index){
 
 		var container = document.createElement("div");
 		container.setAttribute("class", "screenshot-container");
 
-		var screenShot = document.createElement( "img" );
-		screenShot.setAttribute("class", "screenshot");
-		screenShot.src = page.initialShot;
-
-		var heatmap = document.createElement('img');
-		heatmap.setAttribute("class", "heatmap");
-		heatmap.src = page.heatmap;
-
-		container.appendChild(screenShot);
-		container.appendChild(heatmap);
-
 		document.body.appendChild(container);
+
+		var newCanvas = document.createElement("canvas");
+		newCanvas.setAttribute("class", "screenshot-canvas");
+		newCanvas.setAttribute("id", "canvas-" + (index + 1));
+
+		container.appendChild(newCanvas);
+
+		var screenShot = new Image;
+		screenShot.src = page.initialShot;
+		// container.appendChild(screenShot);
+
+		var heatmap = new Image;
+		heatmap.src = page.heatmap;
+		// container.appendChild(heatmap);
+
+		newCanvas.width = screenShot.width;
+		newCanvas.height = screenShot.width;
+
+		var ctx = newCanvas.getContext("2d");
+
+		screenShot.onload = function(){
+			var imgWidth = this.width;
+			var imgHeight = this.height;
+			ctx.drawImage(screenShot, 0, 0, imgWidth, imgHeight);
+		}
+
+		heatmap.onload = function(){
+			var imgWidth = this.width;
+			var imgHeight = this.height;
+			ctx.drawImage(heatmap, 0, 0, imgWidth, imgHeight);
+		}
 	})
 }
 
 function resetPages(){
 	pages = [];
-	console.log(pages);
 	chrome.storage.local.remove('page');
 }
 
