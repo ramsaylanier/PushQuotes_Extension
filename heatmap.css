@@ -16,22 +16,13 @@
 	box-sizing: border-box;
 }
 
-.screenshot-canvas{
+.canvas{
 	position: absolute;
 	width: 100%;
 	top: 0;
 	left: 0;
 	z-index: 10;
-	box-sizing: border-box;
-}
-
-.screenshot-container img{
-	width: 100%;
-	height: auto;
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 20;
+	padding: 20px;
 	box-sizing: border-box;
 }
 

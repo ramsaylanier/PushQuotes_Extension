@@ -17,7 +17,7 @@ takeScreenShot(null);
 var config = {
   container: document.getElementById('heatmapContainer'),
   radius: 30,
-  maxOpacity: .5,
+  maxOpacity: 1,
   minOpacity: 0,
   blur: .75
 };

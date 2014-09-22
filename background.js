@@ -103,40 +103,56 @@ chrome.tabs.onUpdated.addListener(function(tabId, changedInfo, tab){
 function renderPages(document, pages){
 	pages.forEach(function(page, index){
 
+
+		//create screenshot container and add to document
 		var container = document.createElement("div");
 		container.setAttribute("class", "screenshot-container");
-
 		document.body.appendChild(container);
 
-		var newCanvas = document.createElement("canvas");
-		newCanvas.setAttribute("class", "screenshot-canvas");
-		newCanvas.setAttribute("id", "canvas-" + (index + 1));
 
-		container.appendChild(newCanvas);
+		//create new canvas an append to container
+		var screenShotCanvas = document.createElement("canvas");
+		screenShotCanvas.setAttribute("class", "canvas screenshot-canvas");
+		screenShotCanvas.setAttribute("id", "screenshot-canvas-" + (index + 1));
+		container.appendChild(screenShotCanvas);
+
+		//create new context for canvas
+		var screenShotCtx = screenShotCanvas.getContext("2d");
 
 		var screenShot = new Image;
 		screenShot.src = page.initialShot;
-		// container.appendChild(screenShot);
 
-		var heatmap = new Image;
-		heatmap.src = page.heatmap;
-		// container.appendChild(heatmap);
+		screenShotCanvas.width = screenShot.width;
+		screenShotCanvas.height = screenShot.width;
 
-		newCanvas.width = screenShot.width;
-		newCanvas.height = screenShot.width;
-
-		var ctx = newCanvas.getContext("2d");
-
+		//draw screenshot onto canvas
 		screenShot.onload = function(){
 			var imgWidth = this.width;
 			var imgHeight = this.height;
-			ctx.drawImage(screenShot, 0, 0, imgWidth, imgHeight);
+			screenShotCtx.drawImage(screenShot, 0, 0, imgWidth, imgHeight);
 		}
 
+
+		//create new heatmap canvas an append to container
+		var heatmapCanvas = document.createElement("canvas");
+		heatmapCanvas.setAttribute("class", "canvas heatmap-canvas");
+		heatmapCanvas.setAttribute("id", "heatmap-canvas-" + (index + 1));
+		container.appendChild(heatmapCanvas);
+
+		//create new context for canvas
+		var heatmapCtx = heatmapCanvas.getContext("2d");
+
+		var heatmap = new Image;
+		heatmap.src = page.heatmap;
+
+		heatmapCanvas.width = heatmap.width;
+		heatmapCanvas.height = heatmap.width;
+
+		//draw heatmap onto canvas
 		heatmap.onload = function(){
 			var imgWidth = this.width;
 			var imgHeight = this.height;
-			ctx.drawImage(heatmap, 0, 0, imgWidth, imgHeight);
+			heatmapCtx.drawImage(heatmap, 0, 0, imgWidth, imgHeight);
 		}
 	})
 }
