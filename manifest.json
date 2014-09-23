@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+
+  "name": "Reactional",
+  "description": "Adding exportable heatmaps to websites for user testing purposes",
+  "version": "1.0",
+
+  "permissions": [
+    "downloads", "tabs", "<all_urls>", "storage"
+  ],
+
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  
+  "browser_action": {
+    "default_popup": "popup.html"
+  }
+}
