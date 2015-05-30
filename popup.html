@@ -4,9 +4,18 @@
 	<head>
 		<script type="text/javascript" src="jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="popup.js"></script>
+		<link rel="stylesheet" type="text/css" href="popup.css">
 	</head>
 	<body>
-		<button id="start-btn">Start</button>
-		<button id="stop-btn">Stop</button>
+		<h1 class="title">PushQuotes</h1>
+		<div class="errors"></div>
+		<form class="pq-start-form">
+			<input type="text" name="username" class="pq-username-field" placeholder="username"/>
+			<input type="password" name="password" class="pq-password-field" placeholder="password"/>
+			<input type="text" name="deck-url" class="pq-deck-url-field" placeholder="URL of Deck"/>
+			<input type="submit" class="btn" value="Sync Deck"/>
+		</form>
+
+		<button class="stop-btn btn hidden">Stop Sync</button>
 	</body>
 </html>

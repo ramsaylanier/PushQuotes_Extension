@@ -6,15 +6,24 @@
   "version": "1.0",
 
   "permissions": [
-    "downloads", "tabs", "<all_urls>", "storage"
+    "declarativeContent",
+    "tabs",
+    "https://slides.com/*",
+    "http://pushquotes.com/*",
+    "http://pushquotes.herokuapp.com/*",
+    "http://localhost/*"
   ],
 
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["jquery-1.11.1.min.js", "background.js"],
     "persistent": false
   },
   
-  "browser_action": {
-    "default_popup": "popup.html"
+  "page_action": {
+    "default_popup": "popup.html",
+    "default_icon": {       
+      "19": "images/icon-19.png",
+      "38": "images/icon-38.png"
+    }
   }
 }
